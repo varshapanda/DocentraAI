@@ -1,6 +1,7 @@
-require('dotenv').config();
+require("dotenv").config();
 const { Worker } = require("bullmq");
-const { OpenAIEmbeddings } = require("@langchain/openai");
+// const { OpenAIEmbeddings } = require("@langchain/openai");
+const { GoogleGenerativeAIEmbeddings } = require( "@langchain/google-genai");
 const { QdrantVectorStore } = require("@langchain/qdrant");
 const { Document } = require("@langchain/core/documents");
 const { PDFLoader } = require("@langchain/community/document_loaders/fs/pdf");
@@ -16,9 +17,9 @@ const worker = new Worker(
       const loader = new PDFLoader(data.path);
       const docx = await loader.load();
 
-      const embeddings = new OpenAIEmbeddings({
-        model: "text-embedding-3-small",
-        apiKey: process.env.API_KEY,
+      const embeddings = new GoogleGenerativeAIEmbeddings({
+        model: "text-embedding-004", // latest Gemini embedding model (768 dims)
+        apiKey: process.env.GOOGLE_API_KEY, 
       });
 
       const vectorStore = await QdrantVectorStore.fromExistingCollection(
@@ -30,7 +31,7 @@ const worker = new Worker(
       );
 
       await vectorStore.addDocuments(docx);
-      console.log("All logs are added to vector store");
+      console.log("All docs are added to vector store");
     } catch (err) {
       console.error("Worker error:", err);
     }
