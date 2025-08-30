@@ -1,13 +1,20 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
 const { Queue } = require("bullmq");
+const { GoogleGenerativeAIEmbeddings } = require("@langchain/google-genai");
+const { QdrantVectorStore } = require("@langchain/qdrant");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const queue = new Queue("file-upload-queue", {
-    connection:{
-        host:'localhost',
-        port:6379,
-    }
+  connection: {
+    host: "localhost",
+    port: 6379,
+  },
 });
 
 const storage = multer.diskStorage({
@@ -28,6 +35,42 @@ PORT = 8000;
 
 app.get("/", (req, res) => {
   return res.json("Welcome to PDF RAG APP");
+});
+
+const embeddings = new GoogleGenerativeAIEmbeddings({
+  model: "text-embedding-004",
+  apiKey: process.env.GOOGLE_API_KEY,
+});
+
+app.get("/chat", async (req, res) => {
+  const userQuery = req.query.message;
+  const vectorStore = await QdrantVectorStore.fromExistingCollection(
+    embeddings,
+    {
+      url: process.env.URL,
+      collectionName: "langchainjs-testing",
+    }
+  );
+  const retriever = vectorStore.asRetriever({
+    k: 2,
+  });
+  const result = await retriever.invoke(userQuery);
+
+  const SystemPrompt = `
+  You are a helpful AI assistant who answers the user query based on the available context from PDF file
+  Context:
+  ${JSON.stringify(result)}
+  `;
+  const geminiResponse = await model.generateContent({
+    contents: [
+      {
+        role: "user",
+        parts: [{ text: SystemPrompt }, { text: userQuery }],
+      },
+    ],
+  });
+
+  return res.json({ message: geminiResponse.response.text(), docs: result });
 });
 
 app.post("/upload/pdf", upload.single("pdf"), async (req, res) => {
