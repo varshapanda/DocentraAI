@@ -84,7 +84,7 @@ CLERK_SECRET_KEY=your_clerk_secret_key
 Use Docker Compose to start Valkey (Redis-compatible) and Qdrant:
 
 ```bash
-cd PDF-RAG
+cd docentraai
 docker-compose up -d
 ```
 
