@@ -1,0 +1,72 @@
+services:
+  # Redis Database
+  - type: redis
+    name: docentra-redis
+    plan: free
+    maxmemoryPolicy: noeviction
+
+  # Backend API
+  - type: web
+    name: docentra-backend
+    env: node
+    region: singapore
+    plan: free
+    buildCommand: cd server && npm install
+    startCommand: cd server && npm start
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: QDRANT_URL
+        sync: false
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: docentra-redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: docentra-redis
+          property: port
+
+  # Worker
+  - type: worker
+    name: docentra-worker
+    env: node
+    region: singapore
+    plan: free
+    buildCommand: cd server && npm install
+    startCommand: cd server && npm run worker
+    envVars:
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: QDRANT_URL
+        sync: false
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: docentra-redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: docentra-redis
+          property: port
+
+  # Frontend
+  - type: web
+    name: docentra-frontend
+    env: node
+    region: singapore
+    plan: free
+    buildCommand: cd client && npm install && npm run build
+    startCommand: cd client && npm start
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        sync: false
+      - key: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+        sync: false
+      - key: CLERK_SECRET_KEY
+        sync: false
