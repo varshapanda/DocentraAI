@@ -12,6 +12,8 @@ import {
   FileText,
 } from "lucide-react";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 interface Doc {
   pageContent?: string;
   metadata?: {
@@ -55,7 +57,7 @@ const ChatComponent: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/chat?message=${encodeURIComponent(userMessage)}`
+        `${API_URL}/chat?message=${encodeURIComponent(userMessage)}`
       );
       const data = await response.json();
       setMessages((prev) => [
@@ -163,7 +165,9 @@ const MessageBubble: React.FC<{ message: IMessage }> = ({ message }) => {
     return (
       <div className="flex items-start gap-3 justify-end">
         <div className="bg-white text-black rounded-lg p-4 max-w-3xl">
-          <p className="whitespace-pre-wrap break-words text-sm">{message.content}</p>
+          <p className="whitespace-pre-wrap break-words text-sm">
+            {message.content}
+          </p>
         </div>
         <div className="bg-white/10 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">
           <User className="h-4 w-4 text-white" />
