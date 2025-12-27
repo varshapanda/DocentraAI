@@ -109,7 +109,7 @@ Frontend will be available at:
 ```bash
 cd server
 npm install
-node index.js
+npm run dev
 ```
 
 Backend API will be available at:  
@@ -118,7 +118,7 @@ Backend API will be available at:
 #### Worker
 ```bash
 cd server
-node worker.js
+npm run worker
 ```
 
 ---
@@ -146,5 +146,12 @@ Uploads a PDF file and adds a background job for processing.
 Accepts a query string parameter `message` and returns an AI-generated response based on document context.  
 
 ---
+
+![LandingPage](./images/LandingPage.png)
+
+![ThinkingPage](./images/ThinkingPage.png)
+
+![ChatPage](./images/ChatPage.png)
+
  
 
