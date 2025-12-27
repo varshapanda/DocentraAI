@@ -2,6 +2,8 @@
 import * as React from "react";
 import { Upload, FileText, CheckCircle, Plus } from "lucide-react";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
 const FileUploadComponent: React.FC = () => {
   const [isUploading, setIsUploading] = React.useState(false);
   const [uploadSuccess, setUploadSuccess] = React.useState(false);
@@ -24,7 +26,7 @@ const FileUploadComponent: React.FC = () => {
           formData.append('pdf', file);
 
           try {
-            await fetch('http://localhost:8000/upload/pdf', {
+            await fetch(`${API_URL}/upload/pdf`, {
               method: 'POST',
               body: formData
             });
