@@ -22,7 +22,8 @@ export default function Home() {
 
       {/* Main Content */}
       <div className="flex h-[calc(100vh-73px)]">
-        {/* Fixed Left Sidebar - File Upload */}
+
+        {/* Left Sidebar - File Upload */}
         <div className="w-80 border-r border-gray-800 bg-gray-950/50 p-6 flex flex-col">
           <div className="mb-6">
             <h2 className="text-lg font-semibold text-white mb-2">Document Upload</h2>

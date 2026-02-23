@@ -21,10 +21,13 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "DocentraAI - Intelligent Document Assistant",
   description: "Upload PDFs and chat with your documents using AI",
+   icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
-  children,
+  children, 
 }: Readonly<{
   children: React.ReactNode;
 }>) {
